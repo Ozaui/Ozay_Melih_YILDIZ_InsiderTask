@@ -17,6 +17,8 @@ $(() => {
 
     buildHTML: function () {
       const html = `
+      <div class="container-with-buttons">
+        <div class="before-btn"> ← </div>
         <div class="new-container">
           <div class="new-title-container">
             <h2 class="new-title">
@@ -24,11 +26,12 @@ $(() => {
             </h2>
           </div>
           <div class="carousel-wrapper">
-           
-            <div class="new-container-carousel"></div>
-          
+            <div class="new-container-carousel">
+            </div>
           </div>
         </div>
+        <div class="next-btn"> → </div>
+      </div>
       `;
       let targetElement = $(".ng-star-inserted");
 
@@ -53,16 +56,50 @@ $(() => {
             align-items: center;
             justify-content: space-between;
           }
+            
+          .container-with-buttons {
+            position: relative;
+            display: flex;
+            align-items: center;
+          }
 
+          .new-container {
+            flex: 1;
+            overflow: hidden;
+          }
+
+        .before-btn,
+          .next-btn {
+            width: 40px;
+            height: 40px;
+            background: #fff; 
+            color: black;
+            border-radius: 50%;
+            box-shadow: 0 6px 2px 0 #03030303, 0 2px 9px 0 #b0b0b014, 0 2px 4px 0 #b0b0b024, 0 0 1px 0 #b0b0b03d, 0 0 1px 0 #b0b0b047;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position:absolute; 
+            font-size: 24px;
+            z-index: 10; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            border: none;
+          }
+
+          .before-btn{         
+            left: -65px;
+          }
+
+          .next-btn {
+            right: -65px;
+          }
+         
           .new-title{
             font-size: 24px;
             font-weight: 500;
             color: 2b2f33;
-          }
-          @media screen and (max-width: 480px){
-            .new-title{
-              font-size:20px;
-            }          
           }
 
           .carousel-wrapper {
@@ -71,14 +108,13 @@ $(() => {
 
           .new-container-carousel {
             display: grid;
-            gap: 16px;
-            padding: 20px 0;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 24px;
           }
 
           .product-info-card {
             position: relative;
-            min-width: 280px;
-            max-width: 280px;
+            width: 100%;
             border: 1px solid #f2f5f7;
             border-radius: 8px;
             padding: 12px;
@@ -115,10 +151,9 @@ $(() => {
             color: orange;
           }
 
-        .original-price-row {
+          .original-price-row {
             font-size: 12px;
             color: #a2b1bc !important;
-            margin: 4px 0;
             display: inline-block;
             margin-right: 8px;
             text-decoration: line-through;
@@ -140,7 +175,7 @@ $(() => {
             color: #00a365;
           }
 
-           .current-price-alone {
+          .current-price-alone {
             display: inline-block;
             font-size: 18px !important;
             font-weight: bolder;
@@ -169,11 +204,27 @@ $(() => {
             color : #fff;
           }
 
-          /* Tablet için responsive ayarlar */
-          @media screen and (max-width: 768px) {
+          /* 1400px altı - 4 kart */
+          @media screen and (max-width: 1480px) {
+            .new-container-carousel {
+              grid-template-columns: repeat(4, 1fr);
+            }
+          }
+
+          /* 1024px altı - 3 kart */
+          @media screen and (max-width: 1279px) {
+            .new-container-carousel {
+              grid-template-columns: repeat(3, 1fr);
+            }
+          }
+
+          /* 768px altı - 2 kart (Tablet) */
+          @media screen and (max-width: 991px) {
+            .new-container-carousel {
+              grid-template-columns: repeat(2, 1fr);
+            }
+
             .product-info-card {
-              min-width: 220px;
-              max-width: 220px;
               padding: 10px;
             }
 
@@ -185,18 +236,28 @@ $(() => {
             .product-info-card > p {
               font-size: 16px;
             }
+
+            .before-btn,
+            .next-btn {
+              width: 40px;
+              height: 40px;
+              font-size: 20px;
+            }
           }
 
-          /* Mobil için responsive ayarlar */
+          /* 480px altı - 2 kart (Mobil) */
           @media screen and (max-width: 480px) {
+            .new-title{
+              font-size:20px;
+            }
+
             .new-container-carousel {
+              grid-template-columns: repeat(2, 1fr);
               gap: 10px;
               padding: 12px 0;
             }
 
             .product-info-card {
-              min-width: 160px;
-              max-width: 160px;
               padding: 8px;
             }
 
@@ -234,9 +295,16 @@ $(() => {
             .product-info-card img {
               margin-bottom: 8px;
             }
+
+            .before-btn,
+            .next-btn {
+              width: 35px;
+              height: 35px;
+              font-size: 18px;
+            }
           }
 
-          /* Çok küçük ekranlar için */
+          /* 360px altı - Çok küçük ekranlar */
           @media screen and (max-width: 360px) {
             .product-info-card {
               padding: 6px;
