@@ -4,11 +4,15 @@ $(() => {
     favorites: [],
 
     init: function () {
+      // Burada path kontrolü yaptım.
+      // Eğper ki "/" hariç bir pathde ise render edilmiycek.
       const currentPath = window.location.pathname;
       if (currentPath !== "/") {
         console.log("Wrong Page");
         return;
       }
+
+      //BUrada yazdığımız fonksiyonların çağrısı var.
       this.buildCSS();
       this.buildHTML();
       this.setEvent();
@@ -16,6 +20,7 @@ $(() => {
     },
 
     buildHTML: function () {
+      // Default HTML yapımız. Bu yapı içerisinde card yapılarını render edereceğiz.
       const html = `
       <div class="container-with-buttons">
         <div class="before-btn"> ← </div>
@@ -35,22 +40,16 @@ $(() => {
       `;
       let targetElement = $(".ng-star-inserted");
 
+      // Konumlanmayı burada sağladım.
+      // Eğer ki .ng-star-inserted classlı bir tag bulamaz ise konumlandırmıycak.
       if (targetElement.length) {
         targetElement.eq(0).prepend(html);
         console.log("Konumlandırma başarılı");
-      } else {
-        $("body").append(html);
-        console.log("Konumlandırma hatası. Sayfa sonuna yerleştirildi");
       }
     },
 
     buildCSS: function () {
       const css = `
-          *{
-            font-family: Quicksand-SemiBold;
-            font-weight: bold;
-          }
-
           .new-title-container{
             display: flex;
             align-items: center;
@@ -103,24 +102,41 @@ $(() => {
           }
 
           .carousel-wrapper {
+            overflow-x: hidden;
+            height: 400px;
             position: relative;
           }
 
           .new-container-carousel {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 24px;
+            display: flex;
+            flex-wrap:nowrap;
+            height: 100%;
+            scroll-snap-type: x mandatory; 
+            overflow-x: auto;
+            scroll-behavior: smooth; 
+          }
+
+          .new-container-carousel::-webkit-scrollbar {
+               display: none;
           }
 
           .product-info-card {
             position: relative;
-            width: 100%;
+            width: 244.85px;
             border: 1px solid #f2f5f7;
             border-radius: 8px;
             padding: 12px;
             display: flex;
+            flex: 0 0 auto;
             flex-direction: column;
+            scroll-snap-align: start;  
             background: white;
+            margin-right:16px;
+          }
+          
+          .product-info-card:hover{
+            border:1px solid #cdcdcdff;
+            cursor:pointer;
           }
 
           .product-info-card img {
@@ -181,11 +197,16 @@ $(() => {
             font-weight: bolder;
             color: black;
           }
-
+  
+          .action-row {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: auto; 
+            padding-top: 8px;
+          }
+          
           .add-basket-btn {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
             background: #fff;
             color: #0091d5;
             border-radius: 50%;
@@ -197,6 +218,7 @@ $(() => {
             align-items: center;
             justify-content: center;
             box-shadow: rgba(176, 176, 176, 0.01) 0px 6px 2px 0px, rgba(176, 176, 176, 0.08) 0px 2px 9px 0px, rgba(176, 176, 176, 0.14) 0px 2px 4px 0px, rgba(176, 176, 176, 0.24) 0px 0px 1px 0px, rgba(176, 176, 176, 0.28) 0px 0px 1px 0px;
+            border: none;
           }
 
           .add-basket-btn:hover {
@@ -204,27 +226,25 @@ $(() => {
             color : #fff;
           }
 
-          /* 1400px altı - 4 kart */
+          .price-container {
+            display: block; /* Flexbox içinde blok eleman gibi davranması için */
+          }
+
           @media screen and (max-width: 1480px) {
-            .new-container-carousel {
-              grid-template-columns: repeat(4, 1fr);
-            }
+            .product-info-card{
+              width:275.39px;
+            } 
           }
 
-          /* 1024px altı - 3 kart */
           @media screen and (max-width: 1279px) {
-            .new-container-carousel {
-              grid-template-columns: repeat(3, 1fr);
-            }
+            .product-info-card{
+              width:297.19px;
+            } 
           }
 
-          /* 768px altı - 2 kart (Tablet) */
           @media screen and (max-width: 991px) {
-            .new-container-carousel {
-              grid-template-columns: repeat(2, 1fr);
-            }
-
             .product-info-card {
+            width: 334.85px;
               padding: 10px;
             }
 
@@ -245,20 +265,21 @@ $(() => {
             }
           }
 
-          /* 480px altı - 2 kart (Mobil) */
+          @media screen and (max-width: 767px) {
+             .product-info-card {
+              padding: 8px;
+              width:244.85px;
+            }
+          }
+
           @media screen and (max-width: 480px) {
             .new-title{
               font-size:20px;
             }
 
-            .new-container-carousel {
-              grid-template-columns: repeat(2, 1fr);
-              gap: 10px;
-              padding: 12px 0;
-            }
-
             .product-info-card {
               padding: 8px;
+              width: calc(50% - 11px);
             }
 
             .favorite-btn {
@@ -273,8 +294,6 @@ $(() => {
               width: 38px;
               height: 38px;
               font-size: 22px;
-              bottom: 8px;
-              right: 8px;
             }
 
             .product-info-card > p:first-of-type {
@@ -304,7 +323,6 @@ $(() => {
             }
           }
 
-          /* 360px altı - Çok küçük ekranlar */
           @media screen and (max-width: 360px) {
             .product-info-card {
               padding: 6px;
@@ -338,6 +356,7 @@ $(() => {
     setEvent: function () {
       const self = this;
 
+      // Favoriye ekleme fonksiyonu. Localstorega a kaydedip oradan çekiyoruz.
       $(".new-container").on("click", ".favorite-btn", function () {
         const productId = $(this).closest(".product-info-card").data("id");
         let isFavorite = self.favorites.includes(productId);
@@ -354,16 +373,42 @@ $(() => {
         console.log("Favoriler güncellendi:", self.favorites);
       });
 
-      $(".new-container").on("click", ".add-basket-btn", function () {
+      // Kullanıcı kart yapısında bir yere tıklar ise yönlendrme yapan fonksiyon
+      $(".new-container").on("click", ".product-info-card", function () {
         const productUrl = $(this).data("url");
         if (productUrl) {
           window.open(productUrl, "_blank");
         } else {
-          console.warn("Ürün URL'si bulunamadı");
+          console.log("Ürün URL'si bulunamadı");
         }
+      });
+
+      // Kaydırma işlemleri için fonksiyon
+      // https://stackoverflow.com/questions/22078356/carousel-using-jquery
+      const carousel = $(".new-container-carousel");
+      carousel.on("wheel", function (e) {
+        if (e.originalEvent.deltaX !== 0) {
+          e.preventDefault();
+        }
+      });
+      $(".before-btn").click(() => {
+        const cardWidth = carousel.find(".product-info-card").outerWidth(true);
+        carousel.animate(
+          { scrollLeft: carousel.scrollLeft() - cardWidth },
+          300
+        );
+      });
+
+      $(".next-btn").click(() => {
+        const cardWidth = carousel.find(".product-info-card").outerWidth(true);
+        carousel.animate(
+          { scrollLeft: carousel.scrollLeft() + cardWidth },
+          300
+        );
       });
     },
 
+    // APIdan gelen get isteğini çektiğimiz fonksiyon
     fetchAndRenderProducts: async function () {
       const BASE_URL =
         "https://gist.githubusercontent.com/sevindi/8bcbde9f02c1d4abe112809c974e1f49/raw/9bf93b58df623a9b16f1db721cd0a7a539296cf0/products.json";
@@ -395,6 +440,7 @@ $(() => {
       this.renderProducts(products);
     },
 
+    // Card yapılarını render ettiğimiz bölüm.
     renderProducts: function (products) {
       const render = $(".new-container").find(".new-container-carousel");
       if (!products || products.length === 0) {
@@ -409,7 +455,8 @@ $(() => {
         const favoriteClass = isFavorite ? "is-favorite" : "";
         const favoriteIcon = isFavorite ? "♥" : "♡";
 
-        let priceHTML = `<p class="current-price-alone">${product.price}TL</p>`;
+        let priceHTML = `<p class="current-price-alone">${product.price} TL</p>`;
+        // Eğer farklı fiyat var ise bu kısım render edilir.
         if (product.price !== product.original_price) {
           const discount = Math.round(
             ((product.original_price - product.price) /
@@ -424,13 +471,20 @@ $(() => {
                 <p class="current-price">${product.price} TL</p> 
             `;
         }
+
         cardHTML += `
-          <div class="product-info-card ${favoriteClass}" data-id="${product.id}" data-url="${product.url}">
+          <div class="product-info-card ${favoriteClass}" data-id="${product.id}"  data-url="${product.url}">
             <button class="favorite-btn ${favoriteClass}">${favoriteIcon}</button>
             <img src="${product.img}" alt="${product.name}"/>
-            <p> ${product.brand} - ${product.name}</p>
-            ${priceHTML}
-            <button class="add-basket-btn" data-url="${product.url}">+</button>
+            
+            <p style="margin-bottom: 8px;"> ${product.brand} - ${product.name}</p> 
+            
+            <div class="action-row">
+              <div class="price-container">
+                ${priceHTML}
+              </div>
+              <button class="add-basket-btn">+</button>
+            </div>
           </div>
         `;
       });
