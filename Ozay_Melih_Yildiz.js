@@ -357,7 +357,10 @@ $(() => {
       const self = this;
 
       // Favoriye ekleme fonksiyonu. Localstorega a kaydedip oradan çekiyoruz.
-      $(".new-container").on("click", ".favorite-btn", function () {
+      $(".new-container").on("click", ".favorite-btn", function (e) {
+        // Bu kısımda bug fark ettiğim için sonradan ekledim.
+        // Eğer ki favori buttonuna tıklarsak yönlendirme yapmıyor. Sadece favoriye ekliyor.
+        e.stopPropagation();
         const productId = $(this).closest(".product-info-card").data("id");
         let isFavorite = self.favorites.includes(productId);
 
